@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+
+# remind me to learn to type...
+
+# a random message is chosen from the lines below that start with
+# a specific comment string: '#: '
+
+#: %s: learn to spell, silly
+#: %s: "udpate?" what's an "udpate?"
+#: %s: whoa there, speedy typer! slow down!
+
+messages=()
+mapfile -t messages < <(awk '/^#: /' "${BASH_SOURCE[0]}" | sed -e 's/^#: //')
+
+
+command_name="$( basename -- "${BASH_SOURCE[0]}" )"
+message_count="$(( ${#messages[@]} ))"
+random_id="$(( RANDOM % message_count ))"
+random_message="${messages[random_id]}"
+if [[ -t 2 ]]; then
+  color=$'\e[31m'
+  clear=$'\e[0m'
+else
+  color=""
+  clear=""
+fi
+
+env | grep -i udpate 1>&2
+
+printf 1>&2 "%s${random_message}%s\n" "$color" "$command_name" "$clear"
+
+exit 1
+
